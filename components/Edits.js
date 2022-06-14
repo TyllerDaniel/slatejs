@@ -1,10 +1,12 @@
 import React,{useState, useMemo, useCallback} from "react";
 import { createEditor, Transforms,Editor, Text } from 'slate';
 import { Slate,Editable,withReact } from "slate-react";
+import imageExtensions from 'image-extensions'
+import isUrl from 'is-url'
 
 const Editorz = () => {
 
-    const editor = useMemo(() => withReact(createEditor()),[]);
+    const [editor] = useState(() => withReact(createEditor()),[]);
 
     const renderElement = useCallback(props => {
         switch (props.element.type) {
@@ -21,7 +23,24 @@ const Editorz = () => {
         <Slate
             editor = {editor}
             value = {initialValue}>
+            <div>
+                <button
+                    onMouseDown={event => {
+                      event.preventDefault()
+                      CustomEditor.toggleBoldMark(editor)
+                    }}>
+                    Bold
+                </button>
+                <button
+                    onMouseDown={event => {
+                      event.preventDefault()
+                      CustomEditor.toggleCodeBlock(editor)
+                    }}>
+                    Code Block
+                </button>
+            </div>
             <Editable 
+                editor = {editor}
                 renderElement={renderElement}
                 renderLeaf={renderLeaf}
                  onKeyDown = {event => {
@@ -31,23 +50,13 @@ const Editorz = () => {
                     switch(event.key) {
                     case '`': {
                         event.preventDefault()
-                        const [ match ] = Editor.nodes(editor, {
-                            match: n => n.type === 'code',
-                        })
-                        Transforms.setNodes(
-                            editor,
-                            { type: match ? null: 'code' },
-                            { match: n => Editor.isBlock(editor, n) }
-                        )
+                        CustomEditor.toggleCodeBlock(editor)
                         break
-                    }
+                        }
+
                     case 'b': {
                         event.preventDefault()
-                        Transforms.setNodes(
-                            editor,
-                            { bold: true },
-                            { match: n => Text.isText(n), split: true }
-                        )
+                        CustomEditor.toggleBoldMark(editor)
                         break
                     }
                         
@@ -57,6 +66,42 @@ const Editorz = () => {
     );
 };
 
+const CustomEditor = {
+  isBoldMarkActive(editor) {
+    const [match] = Editor.nodes(editor, {
+      match: n => n.bold === true,
+      universal: true,
+    })
+
+    return !!match
+  },
+
+  isCodeBlockActive(editor) {
+    const [match] = Editor.nodes(editor, {
+      match: n => n.type === 'code',
+    })
+
+    return !!match
+  },
+
+  toggleBoldMark(editor) {
+    const isActive = CustomEditor.isBoldMarkActive(editor)
+    Transforms.setNodes(
+      editor,
+      { bold: isActive ? null : true },
+      { match: n => Text.isText(n), split: true }
+    )
+  },
+
+  toggleCodeBlock(editor) {
+    const isActive = CustomEditor.isCodeBlockActive(editor)
+    Transforms.setNodes(
+      editor,
+      { type: isActive ? null : 'code' },
+      { match: n => Editor.isBlock(editor, n) }
+    )
+  },
+}
 const initialValue = [
     {
         type: 'paragraph',
