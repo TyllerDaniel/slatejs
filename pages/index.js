@@ -1,6 +1,11 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import Editorz from '../components/Edits'
+import ImageEditorz from '../components/imageEdits'
+import CheckListsExample from '../components/checklists'
+import EmbedsExample from '../components/embed'
+import InlinesExample from '../components/inlines'
+import IFrameExample from '../components/iframes'
 import styles from '../styles/Home.module.css'
 
 export default function Home() {
@@ -20,7 +25,7 @@ export default function Home() {
         <p className={styles.description}>
           Sample by Gachengoh
          </p>
-        <Editorz/>
+        <Editorz />
       </main>
 
       <footer className={styles.footer}>

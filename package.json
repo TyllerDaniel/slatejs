@@ -9,10 +9,15 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/css": "^11.9.0",
+    "@emotion/react": "^11.9.3",
+    "image-extensions": "^1.1.0",
+    "is-url": "^1.2.4",
     "next": "12.1.6",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "slate": "^0.81.0",
+    "slate-history": "^0.66.0",
     "slate-react": "^0.81.0"
   },
   "devDependencies": {
